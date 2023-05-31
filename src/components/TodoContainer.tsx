@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useReducer } from "react";
 import { TodoAddForm } from "./TodoAddForm";
 import { TodoList } from "./TodoList";
 import { useMemo } from "react";
@@ -10,7 +10,7 @@ export type TodoType = {
   isDone: boolean;
 };
 
-type TodoAction =
+type TodoActionType =
   | {
       type: "add";
       content: TodoType["content"];
@@ -27,7 +27,7 @@ type TodoAction =
 export const TodoContainer = () => {
   const initialTodos: TodoType[] = useMemo(() => [], []);
   const todoReducerFunc = useCallback(
-    (state: TodoType[], action: TodoAction): TodoType[] => {
+    (state: TodoType[], action: TodoActionType): TodoType[] => {
       switch (action.type) {
         case "add": {
           const uuid = self.crypto.randomUUID();
@@ -50,7 +50,7 @@ export const TodoContainer = () => {
     },
     []
   );
-  
+
   const [todos, dispatchTodos] = useReducer(todoReducerFunc, initialTodos);
   const addTodo = (content: TodoType["content"]) =>
     dispatchTodos({ type: "add", content });

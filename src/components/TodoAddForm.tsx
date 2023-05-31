@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TodoType } from "./TodoContainer";
 
 type Props = {
-  addTodo: (inputText: TodoType["content"]) => void;
+  addTodo: (content: TodoType["content"]) => void;
 };
 
 export const TodoAddForm: React.FC<Props> = ({ addTodo }) => {
