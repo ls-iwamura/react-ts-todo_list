@@ -1,6 +1,8 @@
 import React, { useReducer, useState } from "react";
 import { TodoAddForm } from "./TodoAddForm";
 import { TodoList } from "./TodoList";
+import { useMemo } from "react";
+import { useCallback } from "react";
 
 export type TodoType = {
   id: string;
@@ -22,25 +24,33 @@ type TodoAction =
       id: TodoType["id"];
     };
 
-const todoReducerFunc = (state: TodoType[], action: TodoAction): TodoType[] => {
-  switch (action.type) {
-    case "add": {
-      const uuid = self.crypto.randomUUID();
-      return [{ id: uuid, content: action.content, isDone: false }, ...state];
-    }
-    case "toggleIsDone": {
-      return state.map((todo) => {
-        return todo.id === action.id ? { ...todo, isDone: !todo.isDone } : todo;
-      });
-    }
-    case "delete": {
-      return state.filter((todo) => todo.id !== action.id);
-    }
-  }
-};
-
 export const TodoContainer = () => {
-  const initialTodos: TodoType[] = [];
+  const initialTodos: TodoType[] = useMemo(() => [], []);
+  const todoReducerFunc = useCallback(
+    (state: TodoType[], action: TodoAction): TodoType[] => {
+      switch (action.type) {
+        case "add": {
+          const uuid = self.crypto.randomUUID();
+          return [
+            { id: uuid, content: action.content, isDone: false },
+            ...state,
+          ];
+        }
+        case "toggleIsDone": {
+          return state.map((todo) => {
+            return todo.id === action.id
+              ? { ...todo, isDone: !todo.isDone }
+              : todo;
+          });
+        }
+        case "delete": {
+          return state.filter((todo) => todo.id !== action.id);
+        }
+      }
+    },
+    []
+  );
+  
   const [todos, dispatchTodos] = useReducer(todoReducerFunc, initialTodos);
   const addTodo = (content: TodoType["content"]) =>
     dispatchTodos({ type: "add", content });
